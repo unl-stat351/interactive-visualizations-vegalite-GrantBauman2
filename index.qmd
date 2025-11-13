@@ -1,6 +1,6 @@
 ---
 title: "Homework: Interactive Visualization with Vega-Lite"
-author: "Your Name"
+author: "Grant Bauman"
 format: html
 theme: cosmo
 ---
@@ -138,11 +138,11 @@ Plot.plot({
 
 Can you think of a better way to display this data, potentially using similar selectors? Describe the changes you'd make. 
 
-> 
+> Instead of saturation slider we could add sliders for RGB and HLS depending on which one you have selected. These could have max and min ranges to show only certain color ranges like purples or greens.
 
 Is your proposed graphic supported by vega-lite? Why or why not? (You can provide links to documentation/stackOverflow)
 
-> 
+> Yes, It wouldn't be much different than what we are doing below in my mind.
 
 
 ## Adding selectors
@@ -157,11 +157,10 @@ Wire your `maxSat2` selector to the plot, using the chunk below, which I've edit
 viewof space2 = Inputs.select(["HSL", "RGB"], {label: "Color space (axes)", value: "HSL"})
 // selector for color saturation/intensity
 viewof minSat2 = Inputs.range([0, 100], {label: "Min saturation (%)", value: 0, step: 1})
-
+viewof maxSat2 = Inputs.range([minSat2, 100], {label: "Max saturation (%)", value: 100, step: 1})
 
 // filter out points based on saturation
-filtered2 = colors.filter(d => d.s >= minSat2)
-
+filtered2 = colors.filter(d => (d.s <= maxSat2) && (d.s >= minSat2))
 // Create an x variable that's conditional on what is selected,
 // changing both the values and the label accordingly
 xAccessor2 = space === "HSL" ? (d) => d.h : (d) => d.r
@@ -179,7 +178,7 @@ Plot.plot({
   color: {legend: false}, // no need for legends when the data is colors
   marks: [
     Plot.dot(
-      filtered2, // use filtered data
+      filtered2,// use filtered data
       {
         x: xAccessor2, y: yAccessor2, // specify mappings
         fill: (d) => d.hex,
